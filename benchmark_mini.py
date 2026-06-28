@@ -169,10 +169,12 @@ if __name__=='__main__':
             items=expand_items(n)
             counts=[len(enc.encode(fn(items))) for fn in FORMATTERS.values()]
             print(str(n)+','+','.join(map(str, counts)))
-    # output 12 item appendix files
+    # output 12 item appendix files (en el directorio actual)
+    import os
+    out_dir = os.path.dirname(os.path.abspath(__file__))
     items=expand_items(12)
     for name, fn in FORMATTERS.items():
         if name in ['.mini','.toon','JSON-compact','YAML']:
             ext = {'JSON-compact':'json','YAML':'yaml','.mini':'mini','.toon':'toon'}[name]
-            with open(f'/mnt/data/dataset_12.{ext}', 'w', encoding='utf-8') as f:
+            with open(os.path.join(out_dir, f'dataset_12.{ext}'), 'w', encoding='utf-8') as f:
                 f.write(fn(items))
