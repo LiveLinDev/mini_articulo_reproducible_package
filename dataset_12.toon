@@ -1,0 +1,27 @@
+meta:
+  model: IRT3PL
+  date: 20260603
+  n: 12
+  lang: es
+  topic: evaluación transversal
+  bloom_distribution[6]: 1,1,1,1,1,1
+  cat:
+    theta_init: 0
+    theta_min: -3
+    theta_max: 3
+    se_stop: 0.3
+    max_items: 12
+    exposure_ctrl: SH
+items[12]{id,bloom,topic,statement,o1,o2,o3,o4,correct,a,b,c,difficulty,area,exposure_cap,demand}:
+  i1,L1,Biología,¿Dónde ocurre principalmente la fotosíntesis?,cloroplastos,núcleo,mitocondria,ribosoma,1,0.9,-1,0.25,1,biología,0.2,low
+  i2,L2,Química,¿Qué representa el pH de una solución?,acidez o basicidad,masa molecular,temperatura,presión osmótica,1,1.1,-0.3,0.25,2,química,0.2,medium
+  i3,L3,Matemática,"Si 3x+6=18, ¿cuál es el valor de x?","4","6","8","12",1,1.4,0.2,0.2,3,matemática,0.25,medium
+  i4,L4,Historia,¿Qué factor explica mejor la caída del Imperio romano de Occidente?,presiones militares y crisis internas,un solo terremoto,la invención de la imprenta,la conquista española,1,1.7,0.8,0.2,4,historia,0.18,high
+  i5,L5,Literatura,Evalúa cuál opción interpreta mejor un narrador no confiable.,su relato debe contrastarse con evidencias,siempre dice la verdad,solo narra en tercera persona,no participa en la trama,1,2,1.2,0.15,5,literatura,0.15,high
+  i6,L6,Computación,¿Qué solución diseñarías para reducir errores en una API?,validación de esquema y pruebas automatizadas,eliminar logs,usar variables globales,evitar documentación,1,2.3,1.7,0.15,5,computación,0.15,high
+  i7,L1,Física,¿Cuál es la unidad de fuerza en el SI?,newton,joule,watt,pascal,1,0.9,-1.2,0.25,1,física,0.2,low
+  i8,L2,Geografía,¿Qué describe una cuenca hidrográfica?,territorio drenado por un río,altura de una montaña,tipo de clima,frontera política,1,1.1,-0.2,0.25,2,geografía,0.22,medium
+  i9,L3,Comunicación,Elige el conector que completa una relación de causa.,porque,sin embargo,además,por ejemplo,1,1.4,0.1,0.2,3,comunicación,0.25,medium
+  i10,L4,Economía,Analiza qué sucede si sube el precio y baja la demanda.,disminuye la cantidad demandada,sube la oferta siempre,desaparece el mercado,no cambia el equilibrio,1,1.7,0.7,0.2,4,economía,0.18,high
+  i11,L5,Ética,¿Qué criterio permite evaluar mejor una decisión pública?,"impacto, justicia y evidencia",popularidad inmediata,costo únicamente,autoridad del emisor,1,2,1.3,0.15,5,ética,0.15,high
+  i12,L6,Arte,Propón el principio clave para crear una campaña visual coherente.,"unidad entre mensaje, color y audiencia",usar todos los colores,copiar una plantilla,evitar bocetos,1,2.3,1.8,0.15,5,arte,0.15,high
