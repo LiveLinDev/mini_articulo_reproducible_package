@@ -124,18 +124,36 @@ SPECS = {
 }
 
 
+def neutral_content(items):
+    """Contenido canónico en una representación NEUTRA (no idéntica a ningún
+    formato objetivo) para no sesgar la comparación. El modelo debe serializar
+    EXACTAMENTE este contenido; así los errores medidos son solo de formato."""
+    lines = []
+    for k, it in enumerate(items, 1):
+        opts = " / ".join(it['options'])
+        correct_text = it['options'][it['correct']]
+        lines.append(
+            f"Ítem {k}: id={it['id']}; bloom={it['bloom']}; tema={it['topic']}; "
+            f"enunciado={it['statement']}; opciones={opts}; "
+            f"correcta={correct_text}")
+    return "\n".join(lines)
+
+
 def build_prompt(fmt, items):
-    """Prompt de generación: especificación + 1 ejemplo + tarea."""
+    """Prompt de SERIALIZACIÓN: contenido fijo + especificación + tarea.
+
+    Se mide la capacidad del modelo de producir el FORMATO correctamente, con el
+    contenido controlado; el round-trip frente a la referencia mide errores de
+    formato (aridad, marcador, balanceo), no creatividad de contenido."""
     spec = SPECS[fmt]
-    topics = ", ".join(it['topic'] for it in items)
-    one = example_json(items)  # ejemplo de referencia en JSON legible
     return (
-        f"Eres un generador de evaluaciones. {spec}\n\n"
-        f"El objeto de referencia (en JSON, solo para que conozcas el "
-        f"contenido) del primer ítem es:\n{one}\n\n"
-        f"TAREA: produce los {len(items)} ítems de las áreas: {topics}.\n"
-        f"Devuelve ÚNICAMENTE el documento en formato '{fmt}', sin explicación "
-        f"ni bloques de código markdown."
+        f"Eres un serializador de datos. {spec}\n\n"
+        f"Datos a representar ({len(items)} ítems):\n{neutral_content(items)}\n\n"
+        f"TAREA: serializa EXACTAMENTE estos {len(items)} ítems en formato "
+        f"'{fmt}'. No cambies, traduzcas, resumas ni reordenes el contenido; "
+        f"solo represéntalo en la sintaxis indicada, respetando el orden de los "
+        f"ítems y de las opciones. Devuelve ÚNICAMENTE el documento en formato "
+        f"'{fmt}', sin explicación ni bloques de código markdown."
     )
 
 
@@ -265,7 +283,9 @@ def field_accuracy(parsed, ref):
             if str(p.get(key)).strip() == str(r.get(key)).strip():
                 ok += 1
         total += 1
-        if [o.strip() for o in p.get('options', [])] == [o.strip() for o in r['options']]:
+        # coerción a str: algunos formatos parsean "4" como int (YAML/JSON)
+        if [str(o).strip() for o in p.get('options', [])] == \
+           [str(o).strip() for o in r['options']]:
             ok += 1
     # penaliza desajuste de cardinalidad
     total += abs(len(parsed) - len(ref))
@@ -286,9 +306,12 @@ def evaluate(fmt, text, ref):
         result['json_recovery'] = True
     except Exception as e:  # noqa: BLE001
         result['error'] = f"json_recovery: {e}"
-    acc = field_accuracy(parsed, ref)
-    result['field_accuracy'] = round(acc, 4)
-    result['round_trip'] = (len(parsed) == len(ref) and acc == 1.0)
+    try:
+        acc = field_accuracy(parsed, ref)
+        result['field_accuracy'] = round(acc, 4)
+        result['round_trip'] = (len(parsed) == len(ref) and acc == 1.0)
+    except Exception as e:  # noqa: BLE001  (una muestra rara no debe tumbar la corrida)
+        result['error'] = f"eval: {type(e).__name__}: {e}"
     return result
 
 
